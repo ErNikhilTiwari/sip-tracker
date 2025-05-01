@@ -1,6 +1,7 @@
 package com.cg.siptracker.service;
 
 import com.cg.siptracker.dto.ResponseDTO;
+import com.cg.siptracker.dto.SipSummaryDto;
 import com.cg.siptracker.exception.ResourceNotFoundException;
 import com.cg.siptracker.model.NAVRecord;
 import com.cg.siptracker.model.SIP;
@@ -133,4 +134,27 @@ public class AnalyticsServiceImpl implements AnalyticsService {
 
         return Math.pow(endValue / invested, 1.0 / years) - 1;
     }
+
+    @Override
+    public SipSummaryDto analyzeSIP(SIP sip) {
+        Map<LocalDate, Double> cashFlows = generateCashFlows(sip);
+        double xirr = calculateXIRR(cashFlows);
+        double cagr = calculateCAGR(cashFlows);
+
+        double totalInvested = cashFlows.entrySet().stream()
+                .filter(e -> e.getValue() < 0)
+                .mapToDouble(Map.Entry::getValue)
+                .sum() * -1;
+
+        double currentValue = cashFlows.getOrDefault(LocalDate.now(), 0.0);
+
+        return new SipSummaryDto(
+                sip.getFundName(),
+                totalInvested,
+                currentValue,
+                xirr * 100, // in %
+                cagr * 100  // in %
+        );
+    }
+
 }

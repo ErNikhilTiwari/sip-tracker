@@ -1,6 +1,7 @@
 package com.cg.siptracker.service;
 
 import com.cg.siptracker.dto.ResponseDTO;
+import com.cg.siptracker.dto.SipSummaryDto;
 import com.cg.siptracker.model.SIP;
 
 import java.time.LocalDate;
@@ -12,4 +13,5 @@ public interface AnalyticsService {
     Map<LocalDate, Double> generateCashFlows(SIP sip);
     double calculateXIRR(Map<LocalDate, Double> cashFlows);
     double calculateCAGR(Map<LocalDate, Double> cashFlows);
+    SipSummaryDto analyzeSIP(SIP sip);
 }
