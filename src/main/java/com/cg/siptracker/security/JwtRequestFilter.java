@@ -26,6 +26,12 @@ public class JwtRequestFilter extends OncePerRequestFilter {
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain chain)
             throws ServletException, IOException {
+
+        final String requestPath = request.getRequestURI();
+        if (requestPath.contains("/api/sips")) {
+            chain.doFilter(request, response);
+            return;
+        }
     	
         final String authorizationHeader = request.getHeader("Authorization");
         System.out.println(authorizationHeader);

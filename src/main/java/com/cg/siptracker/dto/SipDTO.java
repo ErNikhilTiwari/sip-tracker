@@ -19,7 +19,7 @@ public class SipDTO {
     @NotBlank(message = "Fund name is required")
     private String fundName;
 
-    @NotBlank(message = "Amount is required")
+    @NotNull(message = "Amount is required")
     @Min(value = 1, message = "Amount must be greater than zero")
     private double amount;
 
@@ -27,7 +27,6 @@ public class SipDTO {
     @JsonFormat(pattern = "yyyy-MM-dd")
     private LocalDate startDate;
 
-    @NotBlank(message = "Frequency is required")
     private Frequency frequency;
 
 }

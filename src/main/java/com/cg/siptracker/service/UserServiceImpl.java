@@ -48,7 +48,7 @@ public class UserServiceImpl implements UserService {
         userRepository.save(user);
 
         log.info("User {} registered successfully", user.getEmail());
-        emailService.sendEmail(user.getEmail(), "Registered in SIP Tracker", "Hi....\n You have been successfully registered!");
+        emailService.sendEmail(user.getEmail(), "Registered in SIP Tracker", "Hi.... You have been successfully registered!");
 
         res.setMessage("User Registered Successfully");
         res.setData("Full name:" +user.getFullName() +"\n" +"Email: "+user.getEmail()  );
@@ -70,7 +70,7 @@ public class UserServiceImpl implements UserService {
 //                userRepository.save(user);
 
                 log.debug("Login successful for user: {} - Token generated", user.getEmail());
-                emailService.sendEmail(user.getEmail(), "Logged in SIP Tracker", "Hi....\n You have been successfully logged in! " + token);
+                emailService.sendEmail(user.getEmail(), "Logged in SIP Tracker", "Hi.... You have been successfully logged in! " + token);
                 res.setMessage("User Logged In Successfully: ");
                 res.setData("Token: " + token);
                 return res;
