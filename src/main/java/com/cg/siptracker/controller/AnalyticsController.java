@@ -2,7 +2,7 @@ package com.cg.siptracker.controller;
 
 import com.cg.siptracker.dto.SipSummaryDto;
 import com.cg.siptracker.model.SIP;
-import com.cg.siptracker.repository.SipRepository;
+import com.cg.siptracker.repository.SIPRepository;
 import com.cg.siptracker.service.AnalyticsService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;

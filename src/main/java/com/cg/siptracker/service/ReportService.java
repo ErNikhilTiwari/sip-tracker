@@ -2,7 +2,7 @@ package com.cg.siptracker.service;
 
 import com.cg.siptracker.dto.SipSummaryDto;
 import com.cg.siptracker.model.SIP;
-import com.cg.siptracker.repository.SipRepository;
+import com.cg.siptracker.repository.SIPRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -13,7 +13,7 @@ import java.util.List;
 public class ReportService {
 
     @Autowired
-    private SipRepository sipRepository;
+    private SIPRepository sipRepository;
 
     @Autowired
     private AnalyticsService analyticsService;
