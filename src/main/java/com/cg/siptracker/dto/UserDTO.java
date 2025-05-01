@@ -7,7 +7,6 @@ import lombok.*;
 @AllArgsConstructor
 
 public class UserDTO {
-    private Long id;
 
     @NotBlank(message = "Full name is required")
     private String fullName;
