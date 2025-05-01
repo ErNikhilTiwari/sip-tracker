@@ -1,7 +1,7 @@
 package com.cg.siptracker.config;
 
-import com.cg.siptracker.utility.JwtAuthenticationEntryPoint;
-import com.cg.siptracker.utility.JwtRequestFilter;
+import com.cg.siptracker.security.JwtAuthenticationEntryPoint;
+import com.cg.siptracker.security.JwtRequestFilter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

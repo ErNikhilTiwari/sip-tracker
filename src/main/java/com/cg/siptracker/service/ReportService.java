@@ -23,14 +23,14 @@ public class ReportService {
 
         writer.println("Fund Name,Invested Amount,Current Value,XIRR (%),CAGR (%)");
 
-        for (SIP sip : sips) {
-            SipSummaryDto dto = analyticsServiceImpl.analyzeSIP(sip);
-            writer.printf("%s,%.2f,%.2f,%.2f,%.2f%n",
-                    dto.getFundName(),
-                    dto.getInvestedAmount(),
-                    dto.getCurrentValue(),
-                    dto.getXirr(),
-                    dto.getCagr());
-        }
+//        for (SIP sip : sips) {
+//            SipSummaryDto dto = analyticsServiceImpl.analyzeSIP(sip);
+//            writer.printf("%s,%.2f,%.2f,%.2f,%.2f%n",
+//                    dto.getFundName(),
+//                    dto.getInvestedAmount(),
+//                    dto.getCurrentValue(),
+//                    dto.getXirr(),
+//                    dto.getCagr());
+//        }
     }
 }
