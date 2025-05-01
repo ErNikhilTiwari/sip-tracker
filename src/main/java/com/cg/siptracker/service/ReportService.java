@@ -2,7 +2,7 @@ package com.cg.siptracker.service;
 
 import com.cg.siptracker.dto.SipSummaryDto;
 import com.cg.siptracker.model.SIP;
-import com.cg.siptracker.repository.SipRepository;
+import com.cg.siptracker.repository.SIPRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -13,10 +13,10 @@ import java.util.List;
 public class ReportService {
 
     @Autowired
-    private SipRepository sipRepository;
+    private SIPRepository sipRepository;
 
     @Autowired
-    private AnalyticsService analyticsService;
+    private AnalyticsServiceImpl analyticsServiceImpl;
 
     public void generateCsvReport(PrintWriter writer) {
         List<SIP> sips = sipRepository.findAll();
@@ -24,7 +24,7 @@ public class ReportService {
         writer.println("Fund Name,Invested Amount,Current Value,XIRR (%),CAGR (%)");
 
         for (SIP sip : sips) {
-            SipSummaryDto dto = analyticsService.analyzeSIP(sip);
+            SipSummaryDto dto = analyticsServiceImpl.analyzeSIP(sip);
             writer.printf("%s,%.2f,%.2f,%.2f,%.2f%n",
                     dto.getFundName(),
                     dto.getInvestedAmount(),

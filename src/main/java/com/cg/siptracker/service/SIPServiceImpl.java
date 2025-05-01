@@ -5,6 +5,7 @@ import com.cg.siptracker.dto.SipDTO;
 import com.cg.siptracker.exception.ResourceNotFoundException;
 import com.cg.siptracker.model.SIP;
 import com.cg.siptracker.model.User;
+import com.cg.siptracker.repository.NAVRecordRepository;
 import com.cg.siptracker.repository.SIPRepository;
 import com.cg.siptracker.repository.UserRepository;
 import lombok.extern.slf4j.Slf4j;
@@ -27,7 +28,7 @@ public class SIPServiceImpl implements SIPService {
     private NAVRecordRepository navRecordRepository;
 
     @Autowired
-    private AnalyticsService analyticsService;
+    private AnalyticsServiceImpl analyticsServiceImpl;
 
     @Override
     public ResponseDTO addSIP(SipDTO dto, String email) {
