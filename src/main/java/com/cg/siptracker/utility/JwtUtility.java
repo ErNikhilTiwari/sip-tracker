@@ -38,7 +38,7 @@ public class JwtUtility {
                     .build()
                     .parseClaimsJws(token)
                     .getBody();
-            System.out.println("getting email =>" + claims);
+            System.out.println("getting email => " + claims);
             return claims.getSubject();
         } catch (Exception e) {
             //token expired
