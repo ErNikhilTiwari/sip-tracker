@@ -15,7 +15,9 @@ public class UserDTO {
     @NotBlank(message = "Email is required")
     private String email;
 
+    @NotBlank(message = "New password cannot be blank")
     @Size(min = 6, message = "Password must be at least 6 characters")
+    @Pattern(regexp = "^(?=.*[A-Z])(?=.*\\d)[A-Za-z\\d@$!%*?&]{6,}$", message = "New Password must have at least 6 characters, 1 uppercase letter and 1 digit")
     private String password;
 
     private String role;

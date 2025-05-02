@@ -1,14 +1,16 @@
 package com.cg.siptracker.model;
 
 import jakarta.persistence.*;
-import lombok.Data;
+import lombok.*;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 @Entity
-@Data
 @Table(name = "sips")
+@Getter
+@Setter
+@NoArgsConstructor
 public class SIP {
 
     @Id
@@ -27,6 +29,14 @@ public class SIP {
     @ManyToOne
     @JoinColumn(name = "user_id")
     private User user;
+
+    public SIP(Long id, String fundName, Frequency frequency, double amount, LocalDate startDate) {
+        this.id = id;
+        this.fundName = fundName;
+        this.frequency = frequency;
+        this.amount = amount;
+        this.startDate = startDate;
+    }
 
 
 }

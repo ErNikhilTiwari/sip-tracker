@@ -58,7 +58,7 @@ public ResponseDTO registerUser(RegisterDTO registerDTO) {
     log.info("User saved successfully with email: {}", user.getEmail());
 
     emailService.sendEmail(user.getEmail(), "Registered in Employee Payroll App", "Thank You! You are successfully registered in Employee Payroll App!");
-    RegisterResponseDTO registerResponse = new RegisterResponseDTO(user.getFullName(), user.getEmail());
+    LoginRegisterResponseDTO registerResponse = new LoginRegisterResponseDTO(user.getFullName(), user.getEmail());
     log.info("Registration successful for user: {}", registerResponse.getEmail());
     return new ResponseDTO("User Registered Successfully", registerResponse);
 }
@@ -84,7 +84,7 @@ public ResponseDTO registerUser(RegisterDTO registerDTO) {
         emailService.sendEmail(user.getEmail(), "Login Successful", "Hi " + user.getFullName() + ",\n\n" + "You have successfully logged in to Employee Payroll App. \n\n" + "Your JWT Token is:\n\n" + token + "\n\n");
         log.info("Login successful and token saved for user: {}", user.getEmail());
 
-        LoginResponseDTO loginResponse = new LoginResponseDTO(user.getFullName(), user.getEmail(), token);
+        LoginRegisterResponseDTO loginResponse = new LoginRegisterResponseDTO(user.getFullName(), user.getEmail(), token);
         return new ResponseDTO("Login Successful", loginResponse);
     }
 

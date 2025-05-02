@@ -2,7 +2,6 @@ package com.cg.siptracker.service;
 
 import com.cg.siptracker.dto.ResponseDTO;
 import com.cg.siptracker.dto.SipDTO;
-import com.cg.siptracker.dto.SipResponseDTO;
 import com.cg.siptracker.exception.ResourceNotFoundException;
 import com.cg.siptracker.model.SIP;
 import com.cg.siptracker.model.User;
@@ -12,8 +11,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 
 @Slf4j
 @Service
@@ -39,7 +37,15 @@ public class SIPServiceImpl implements SIPService {
         sip.setUser(user);
 
         SIP saved = sipRepository.save(sip);
-        return new ResponseDTO("SIP added successfully", saved.getId());
+
+        Map<String, Object> response = new HashMap<>();
+        response.put("id", saved.getId());
+        response.put("fundName", saved.getFundName());
+        response.put("frequency", saved.getFrequency());
+        response.put("amount", saved.getAmount());
+        response.put("startDate", saved.getStartDate());
+
+        return new ResponseDTO("SIP added successfully", response);
     }
 
     @Override
@@ -59,17 +65,15 @@ public class SIPServiceImpl implements SIPService {
 
         SIP updated = sipRepository.save(sip);
 
-        SipResponseDTO responseDTO = new SipResponseDTO(
-                updated.getId(),
-                updated.getFundName(),
-                updated.getAmount(),
-                updated.getFrequency(),
-                updated.getStartDate()
-        );
+        Map<String, Object> response = new HashMap<>();
+        response.put("id", updated.getId());
+        response.put("fundName", updated.getFundName());
+        response.put("frequency", updated.getFrequency());
+        response.put("amount", updated.getAmount());
+        response.put("startDate", updated.getStartDate());
 
-        return new ResponseDTO("SIP updated successfully", responseDTO);
+        return new ResponseDTO("SIP updated successfully", response);
     }
-
 
     @Override
     public ResponseDTO deleteSIP(Long sipId, String email) {
@@ -95,13 +99,12 @@ public class SIPServiceImpl implements SIPService {
             throw new ResourceNotFoundException("You do not have permission to view this SIP");
         }
 
-        SipResponseDTO response = new SipResponseDTO(
-                sip.getId(),
-                sip.getFundName(),
-                sip.getAmount(),
-                sip.getFrequency(),
-                sip.getStartDate()
-        );
+        Map<String, Object> response = new HashMap<>();
+        response.put("id", sip.getId());
+        response.put("fundName", sip.getFundName());
+        response.put("frequency", sip.getFrequency());
+        response.put("amount", sip.getAmount());
+        response.put("startDate", sip.getStartDate());
 
         return new ResponseDTO("SIP fetched successfully", response);
     }
@@ -113,20 +116,18 @@ public class SIPServiceImpl implements SIPService {
                 .orElseThrow(() -> new ResourceNotFoundException("User not found with email: " + email));
 
         List<SIP> sips = sipRepository.findByUser(user);
+        List<Map<String, Object>> responseList = new ArrayList<>();
 
-        List<SipResponseDTO> responseList = new ArrayList<>();
         for (SIP sip : sips) {
-            SipResponseDTO dto = new SipResponseDTO(
-                    sip.getId(),
-                    sip.getFundName(),
-                    sip.getAmount(),
-                    sip.getFrequency(),
-                    sip.getStartDate()
-            );
-            responseList.add(dto);
+            Map<String, Object> map = new HashMap<>();
+            map.put("id", sip.getId());
+            map.put("fundName", sip.getFundName());
+            map.put("frequency", sip.getFrequency());
+            map.put("amount", sip.getAmount());
+            map.put("startDate", sip.getStartDate());
+            responseList.add(map);
         }
 
         return new ResponseDTO("All SIPs for user", responseList);
     }
-
 }
