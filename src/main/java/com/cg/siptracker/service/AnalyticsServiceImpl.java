@@ -71,7 +71,7 @@ public class AnalyticsServiceImpl implements AnalyticsService {
                 ChronoUnit.MONTHS : ChronoUnit.WEEKS;
 
         for (LocalDate date = startDate; !date.isAfter(now); date = date.plus(1, unit)) {
-            NAVRecord nav = navRecordRepository.findByFundNameAndNavDate(sip.getFundName(), date)
+            NAVRecord nav = navRecordRepository.findByFundNameAndDate(sip.getFundName(), date)
                     .orElse(null);
             if (nav != null) {
                 flows.put(date, -amount);
@@ -80,7 +80,7 @@ public class AnalyticsServiceImpl implements AnalyticsService {
 
         // Add latest value as positive cash flow (current value)
         NAVRecord latestNav = navRecordRepository
-                .findTopByFundNameOrderByNavDateDesc(sip.getFundName())
+                .findTopByFundNameOrderByDateDesc(sip.getFundName())
                 .orElseThrow(() -> new ResourceNotFoundException("No NAV available for " + sip.getFundName()));
 
         long totalUnits = flows.size();

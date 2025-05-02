@@ -3,7 +3,7 @@ package com.cg.siptracker.controller;
 import com.cg.siptracker.dto.ResponseDTO;
 import com.cg.siptracker.dto.SipDTO;
 import com.cg.siptracker.service.SIPService;
-import com.cg.siptracker.utility.JwtUtil;
+import com.cg.siptracker.utility.JwtUtility;
 import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,12 +20,12 @@ public class SIPController {
     private SIPService sipService;
 
     @Autowired
-    private JwtUtil jwtUtil;
+    private JwtUtility jwtUtil;
 
     // Add a new SIP
     @PostMapping
     public ResponseEntity<ResponseDTO> addSIP(@Valid @RequestBody SipDTO sipDTO, @RequestHeader("Authorization") String token) {
-        String email = jwtUtil.extractUsername(token.substring(7));
+        String email = jwtUtil.extractEmail(token.substring(7));
         log.info("Request to add SIP for user: {}", email);
         ResponseDTO response = sipService.addSIP(sipDTO, email);
         log.info("SIP added successfully for user: {}", email);
@@ -35,7 +35,7 @@ public class SIPController {
     // Update an existing SIP
     @PutMapping("/{sipId}")
     public ResponseEntity<ResponseDTO> updateSIP(@PathVariable Long sipId, @Valid @RequestBody SipDTO sipDTO, @RequestHeader("Authorization") String token) {
-        String email = jwtUtil.extractUsername(token.substring(7));
+        String email = jwtUtil.extractEmail(token.substring(7));
         log.info("Request to update SIP with id: {} for user: {}", sipId, email);
         ResponseDTO response = sipService.updateSIP(sipId, sipDTO, email);
         log.info("SIP updated successfully with id: {} for user: {}", sipId, email);
@@ -45,7 +45,7 @@ public class SIPController {
     // Delete an existing SIP
     @DeleteMapping("/{sipId}")
     public ResponseEntity<ResponseDTO> deleteSIP(@PathVariable Long sipId, @RequestHeader("Authorization") String token) {
-        String email = jwtUtil.extractUsername(token.substring(7));
+        String email = jwtUtil.extractEmail(token.substring(7));
         log.info("Request to delete SIP with id: {} for user: {}", sipId, email);
         ResponseDTO response = sipService.deleteSIP(sipId, email);
         log.info("SIP deleted successfully with id: {} for user: {}", sipId, email);
@@ -55,7 +55,7 @@ public class SIPController {
     // Get SIP details by ID
     @GetMapping("/{sipId}")
     public ResponseEntity<ResponseDTO> getSIPById(@PathVariable Long sipId, @RequestHeader("Authorization") String token) {
-        String email = jwtUtil.extractUsername(token.substring(7));
+        String email = jwtUtil.extractEmail(token.substring(7));
         log.info("Request to fetch SIP details for sipId: {} by user: {}", sipId, email);
         ResponseDTO response = sipService.getSIPById(sipId, email);
         log.info("SIP details fetched successfully for sipId: {} by user: {}", sipId, email);
@@ -65,7 +65,7 @@ public class SIPController {
     // Get all SIPs for a user
     @GetMapping
     public ResponseEntity<ResponseDTO> getSIPsByUser(@RequestHeader("Authorization") String token) {
-        String email = jwtUtil.extractUsername(token.substring(7));
+        String email = jwtUtil.extractEmail(token.substring(7));
         log.info("Request to fetch all SIPs for user: {}", email);
         ResponseDTO response = sipService.getSIPsByUser(email);
         log.info("Fetched all SIPs successfully for user: {}", email);
