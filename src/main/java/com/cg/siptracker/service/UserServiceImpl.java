@@ -1,6 +1,7 @@
 package com.cg.siptracker.service;
 
 import com.cg.siptracker.dto.*;
+import com.cg.siptracker.exception.ResourceNotFoundException;
 import com.cg.siptracker.model.User;
 import com.cg.siptracker.repository.UserRepository;
 import com.cg.siptracker.utility.JwtUtility;
@@ -10,6 +11,9 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import java.security.SecureRandom;
 
+import java.time.LocalDateTime;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Optional;
 
 @Slf4j // Lombok Logging
@@ -20,7 +24,7 @@ public class UserServiceImpl implements UserService {
     UserRepository userRepository;
 
     @Autowired
-    BCryptPasswordEncoder passwordEncoder;
+    BCryptPasswordEncoder bCryptPasswordEncoder;
 
     @Autowired
     EmailService emailService;
@@ -28,122 +32,121 @@ public class UserServiceImpl implements UserService {
     @Autowired
     JwtUtility jwtUtility;
 
-    private static final SecureRandom random = new SecureRandom();
-    @Override
-    public ResponseDTO registerUser(RegisterDTO registerDTO) {
-        log.info("Registering user: {}", registerDTO.getEmail());
-        ResponseDTO res = new ResponseDTO("User already exist",null);
-        if (existsByEmail(registerDTO.getEmail())) {
-            log.warn("Registration failed: User already exists with email {}", registerDTO.getEmail());
-            res.setMessage("error");
-            res.setData("User Already Exists");
-            return res;
-        }
+    @Autowired
+    private OtpService otpService;
 
-        User user = new User();
-        user.setFullName(registerDTO.getFullName());
-        user.setEmail(registerDTO.getEmail());
-        user.setPassword(registerDTO.getPassword());
-        user.setPassword(passwordEncoder.encode(user.getPassword()));
-        userRepository.save(user);
+@Override
+public ResponseDTO registerUser(RegisterDTO registerDTO) {
+    log.info("Registering user with email: {}", registerDTO.getEmail());
 
-        log.info("User {} registered successfully", user.getEmail());
-        emailService.sendEmail(user.getEmail(), "Registered in SIP Tracker", "Hi.... You have been successfully registered!");
-
-        res.setMessage("User Registered Successfully");
-        res.setData("Full name:" +user.getFullName() +"\n" +"Email: "+user.getEmail()  );
-        return res;
+    // Check if email already registered or not
+    if (userRepository.findByEmail(registerDTO.getEmail()).isPresent()) {
+        log.warn("Registration failed: Email already registered - {}", registerDTO.getEmail());
+        throw new ResourceNotFoundException("Email already registered");
     }
+
+    // Encode password
+    String encodedPassword = bCryptPasswordEncoder.encode(registerDTO.getPassword());
+    log.debug("Encoded password generated");
+
+    User user = new User();
+    user.setFullName(registerDTO.getFullName());
+    user.setEmail(registerDTO.getEmail());
+    user.setPassword(encodedPassword);
+
+    userRepository.save(user);
+    log.info("User saved successfully with email: {}", user.getEmail());
+
+    emailService.sendEmail(user.getEmail(), "Registered in Employee Payroll App", "Thank You! You are successfully registered in Employee Payroll App!");
+    RegisterResponseDTO registerResponse = new RegisterResponseDTO(user.getFullName(), user.getEmail());
+    log.info("Registration successful for user: {}", registerResponse.getEmail());
+    return new ResponseDTO("User Registered Successfully", registerResponse);
+}
 
     @Override
     public ResponseDTO loginUser(LoginDTO loginDTO) {
-        log.info("Login attempt for user: {}", loginDTO.getEmail());
-        ResponseDTO res = new ResponseDTO();
-        Optional<User> userExists = getUserByEmail(loginDTO.getEmail());
+        log.info("Attempting login for email: {}", loginDTO.getEmail());
 
+        User user = userRepository.findByEmail(loginDTO.getEmail())
+                .orElseThrow(() -> {
+                    log.warn("Login failed: Invalid email - {}", loginDTO.getEmail());
+                    return new ResourceNotFoundException("Invalid Email or password");
+                });
 
-        if (userExists.isPresent()) {
-            User user = userExists.get();
-            if (matchPassword(loginDTO.getPassword(), user.getPassword())) {
-                String token = jwtUtility.generateToken(user.getEmail());
-//                user.setToken(token);
-//                userRepository.save(user);
-
-                log.debug("Login successful for user: {} - Token generated", user.getEmail());
-                emailService.sendEmail(user.getEmail(), "Logged in SIP Tracker", "Hi.... You have been successfully logged in! " + token);
-                res.setMessage("User Logged In Successfully: ");
-                res.setData("Token: " + token);
-                return res;
-            } else {
-                log.warn("Invalid credentials for user: {}", loginDTO.getEmail());
-                res.setMessage("error");
-                res.setData("Invalid Credentials");
-                return res;
-            }
+        if (!bCryptPasswordEncoder.matches(loginDTO.getPassword(), user.getPassword())) {
+            log.warn("Login failed: Incorrect password for email - {}", loginDTO.getEmail());
+            throw new ResourceNotFoundException("Invalid Email or password");
         }
 
-        log.error("User not found with email: {}", loginDTO.getEmail());
-        res.setMessage("error");
-        res.setData("User Not Found");
-        return res;
+        String token = jwtUtility.generateToken(user.getEmail());
+        log.debug("JWT token generated for user: {}", user.getEmail());
+
+        emailService.sendEmail(user.getEmail(), "Login Successful", "Hi " + user.getFullName() + ",\n\n" + "You have successfully logged in to Employee Payroll App. \n\n" + "Your JWT Token is:\n\n" + token + "\n\n");
+        log.info("Login successful and token saved for user: {}", user.getEmail());
+
+        LoginResponseDTO loginResponse = new LoginResponseDTO(user.getFullName(), user.getEmail(), token);
+        return new ResponseDTO("Login Successful", loginResponse);
     }
 
     @Override
-    public boolean matchPassword(String rawPassword, String encodedPassword) {
-        log.debug("Matching password for login attempt");
-        return passwordEncoder.matches(rawPassword, encodedPassword);
+    public ResponseDTO forgotPassword(RegisterDTO request) {
+        String email = request.getEmail();
+
+        log.info("EMail: " + email);
+
+        User user = userRepository.findByEmail(email).orElseThrow(()-> new ResourceNotFoundException("User not found with this email: " + email));
+
+        String otp = otpService.generateOtp(email);
+        emailService.sendOtpEmail(email, otp);
+
+        return new ResponseDTO("OTP sent to your email. It will expire in 5 minutes.", request.getEmail());
     }
 
     @Override
-    public boolean existsByEmail(String email) {
-        log.debug("Checking if user exists by email: {}", email);
-        return userRepository.findByEmail(email).isPresent();
-    }
+    public ResponseDTO resetPassword(ResetPasswordDTO request) {
 
-    @Override
-    public Optional<User> getUserByEmail(String email) {
-        log.debug("Fetching user by email: {}", email);
-        return userRepository.findByEmail(email);
-    }
+        log.info("Reset Password for email: {}", request.getEmail());
 
-    @Override
-    public ResponseDTO forgotPassword(UserDTO forgotPasswordDTO) {
-        Optional<User> userOptional = userRepository.findByEmail(forgotPasswordDTO.getEmail());
-        if (userOptional.isEmpty()) {
-            return new ResponseDTO("error", "User not found with this email");
+        User user = userRepository.findByEmail(request.getEmail())
+                .orElseThrow(() -> new ResourceNotFoundException("User not found with email: " + request.getEmail()));
+
+        boolean isValidOtp = otpService.validateOtp(user.getEmail(),  request.getOtp());
+
+        if(!isValidOtp) {
+            log.warn("Invalid or expired OTP for email: {}", request.getEmail());
+            throw new ResourceNotFoundException("Invalid or Expired OTP");
         }
 
-        User user = userOptional.get();
-        String otp = String.valueOf(100000 + random.nextInt(900000));
-        user.setResetOTP(otp);
+        String encodedPassword = bCryptPasswordEncoder.encode(request.getNewPassword());
+        user.setPassword(encodedPassword);
         userRepository.save(user);
 
-        emailService.sendEmail(forgotPasswordDTO.getEmail(), "Reset Password", "OTP to reset your password: " + otp);
-
-        return new ResponseDTO("Reset OTP Sent", otp);
+        log.info("Password reset successful for email: {}", user.getEmail());
+        return new ResponseDTO("Password reset successfully", user.getEmail());
     }
 
-    public ResponseDTO resetPassword(ResetPasswordDTO resetPasswordDTO){
-        Optional<User> userOptional = userRepository.findByEmail(resetPasswordDTO.getEmail());
-        if (userOptional.isEmpty()) {
-            return new ResponseDTO("error", "User not found with this email");
+    @Override
+    public ResponseDTO changePassword(ChangePasswordDTO request, String token) {
+        log.info("Changing Password...");
+        String email = jwtUtility.extractEmail(token);
+        User user = userRepository.findByEmail(email)
+                .orElseThrow(() -> new ResourceNotFoundException("User not found"));
+
+        if (!bCryptPasswordEncoder.matches(request.getOldPassword(), user.getPassword())) {
+            log.warn("Old password is incorrect");
+            throw new RuntimeException("Old password is incorrect");
         }
 
-        User user = userOptional.get();
-        String resetOTP =user.getResetOTP();
-        if(resetPasswordDTO.getOtp().equals(resetOTP)){
-            user.setPassword(resetPasswordDTO.getNewPassword());
-            user.setResetOTP(null);
-            user.setPassword(passwordEncoder.encode(user.getPassword()));
-            System.out.println(resetPasswordDTO.getNewPassword());
-            userRepository.save(user);
-            emailService.sendEmail(resetPasswordDTO.getEmail(), "Password Updated","password has been changed and token expired");
-            return new ResponseDTO("Password Updated", "password has been changed and token expired");
-        }
-        else{
-            return new ResponseDTO("token not valid","verify your link again");
-        }
+        user.setPassword(bCryptPasswordEncoder.encode(request.getNewPassword()));
+        userRepository.save(user);
 
+        Map<String, Object> data = new HashMap<>();
+        data.put("email", email);
+        data.put("message", "Password updated successfully");
+        data.put("timestamp", LocalDateTime.now());
+
+        log.info("Password changed successfully for email: {}", user.getEmail());
+        return new ResponseDTO("Password changed successfully", data);
     }
 
 }

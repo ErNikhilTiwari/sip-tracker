@@ -8,16 +8,9 @@ import java.util.Optional;
 
 public interface UserService {
     ResponseDTO registerUser(RegisterDTO registerDTO);
-
     ResponseDTO loginUser(LoginDTO loginDTO);
+    ResponseDTO forgotPassword(RegisterDTO request);
+    ResponseDTO resetPassword(ResetPasswordDTO request);
+    ResponseDTO changePassword(ChangePasswordDTO request, String token);
 
-    boolean matchPassword(String rawPassword, String encodedPassword);
-
-    boolean existsByEmail(String email);
-
-    Optional<User> getUserByEmail(String email);
-    ResponseDTO forgotPassword(UserDTO forgotPasswordDTO);
-    ResponseDTO resetPassword(ResetPasswordDTO resetPasswordDTO);
-
-//    List<SipDTO> getUserSips(Long userId);
 }

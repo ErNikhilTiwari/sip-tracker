@@ -49,7 +49,7 @@ public class SIPController {
         log.info("Request to delete SIP with id: {} for user: {}", sipId, email);
         ResponseDTO response = sipService.deleteSIP(sipId, email);
         log.info("SIP deleted successfully with id: {} for user: {}", sipId, email);
-        return new ResponseEntity<>(response, HttpStatus.NO_CONTENT);
+        return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
     // Get SIP details by ID
@@ -64,7 +64,7 @@ public class SIPController {
 
     // Get all SIPs for a user
     @GetMapping
-    public ResponseEntity<ResponseDTO> getSIPsByUser(@RequestHeader("Authorization") String token) {
+    public ResponseEntity<ResponseDTO> getAllSIPsByUser(@RequestHeader("Authorization") String token) {
         String email = jwtUtil.extractEmail(token.substring(7));
         log.info("Request to fetch all SIPs for user: {}", email);
         ResponseDTO response = sipService.getSIPsByUser(email);
