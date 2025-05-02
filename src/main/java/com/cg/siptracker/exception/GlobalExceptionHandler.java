@@ -14,7 +14,7 @@ import java.util.Map;
 
 @Slf4j
 @ControllerAdvice
-public class GlobalExceptionHandling {
+public class GlobalExceptionHandler {
 
     private static final String message = "Exception while processing request";
 
