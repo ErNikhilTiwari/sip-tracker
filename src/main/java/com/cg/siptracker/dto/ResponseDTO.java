@@ -1,4 +1,5 @@
 package com.cg.siptracker.dto;
+import lombok.AllArgsConstructor;
 import lombok.*;
 
 @Getter

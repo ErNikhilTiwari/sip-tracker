@@ -29,7 +29,7 @@ public class OtpService {
         String storedOtp = otpStorage.get(email);
         LocalDateTime expiryTime = otpExpiry.get(email);
 
-        // Check otp is right and not expired
+        // Check otp is right and not expired yet
         if(storedOtp.equals(otp) && LocalDateTime.now().isBefore(expiryTime)){
             otpStorage.remove(email);
             otpExpiry.remove(email);
