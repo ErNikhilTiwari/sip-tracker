@@ -14,13 +14,13 @@ public class NAVController {
     private INAVService navService;
 
     @GetMapping("/get")
-    public ResponseEntity<ResponseDTO> getBySchemeName(@RequestParam String fundName) {
+    public ResponseEntity<ResponseDTO> getBySchemeName(@RequestParam String fundName, @RequestHeader("Authorization") String token) {
         ResponseDTO response = navService.getNAVHistory(fundName);
         return ResponseEntity.ok(response);
     }
 
     @GetMapping("/fetch")
-    public ResponseEntity<ResponseDTO> fetchNAVs() {
+    public ResponseEntity<ResponseDTO> fetchNAVs(@RequestHeader("Authorization") String token) {
         try {
             ResponseDTO response = navService.fetchAndStoreNAVs();
             return ResponseEntity.ok(response);
