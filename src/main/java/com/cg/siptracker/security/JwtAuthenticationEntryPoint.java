@@ -9,7 +9,7 @@ import org.springframework.stereotype.Component;
 
 import java.io.IOException;
 
-// Returns 401 when unauthorized access is attempted
+// Returns 401 when unauthorized access is attempted.
 @Component
 public class JwtAuthenticationEntryPoint implements AuthenticationEntryPoint {
 

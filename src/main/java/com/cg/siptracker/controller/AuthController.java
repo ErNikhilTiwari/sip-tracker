@@ -1,7 +1,7 @@
 package com.cg.siptracker.controller;
 
 import com.cg.siptracker.dto.*;
-import com.cg.siptracker.model.User;
+
 import com.cg.siptracker.service.UserService;
 import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;

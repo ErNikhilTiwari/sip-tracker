@@ -24,9 +24,9 @@ public class EmailService {
         SimpleMailMessage mailMessage = new SimpleMailMessage();
         mailMessage.setFrom("praveensharma20113@gmail.com");
         mailMessage.setTo(to);
-        mailMessage.setSubject("Your OTP for Password Reset!");
+        mailMessage.setSubject("Your OTP for Password Reset!.");
         mailMessage.setText("Your OTP for resetting your password is: " + otp + "\n\nThis OTP will expire in 5 minutes.");
         mailSender.send(mailMessage);
-        System.out.println("OTP email sent to: " + to);
+        System.out.println("OTP email sent to : " + to);
     }
 }
