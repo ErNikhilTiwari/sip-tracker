@@ -2,6 +2,7 @@ package com.cg.siptracker.service;
 
 import com.cg.siptracker.dto.ResponseDTO;
 import com.cg.siptracker.dto.SipDTO;
+import com.cg.siptracker.dto.SipResponseDTO;
 import com.cg.siptracker.exception.ResourceNotFoundException;
 import com.cg.siptracker.model.SIP;
 import com.cg.siptracker.model.User;
@@ -56,8 +57,18 @@ public class SIPServiceImpl implements SIPService {
         sip.setStartDate(dto.getStartDate());
 
         SIP updated = sipRepository.save(sip);
-        return new ResponseDTO("SIP updated successfully", updated.getId());
+
+        SipResponseDTO responseDTO = new SipResponseDTO(
+                updated.getId(),
+                updated.getFundName(),
+                updated.getAmount(),
+                updated.getFrequency(),
+                updated.getStartDate()
+        );
+
+        return new ResponseDTO("SIP updated successfully", responseDTO);
     }
+
 
     @Override
     public ResponseDTO deleteSIP(Long sipId, String email) {
@@ -83,7 +94,15 @@ public class SIPServiceImpl implements SIPService {
             throw new ResourceNotFoundException("You do not have permission to view this SIP");
         }
 
-        return new ResponseDTO("SIP fetched successfully", sip);
+        SipResponseDTO response = new SipResponseDTO(
+                sip.getId(),
+                sip.getFundName(),
+                sip.getAmount(),
+                sip.getFrequency(),
+                sip.getStartDate()
+        );
+
+        return new ResponseDTO("SIP fetched successfully", response);
     }
 
     @Override

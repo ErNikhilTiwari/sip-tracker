@@ -1,6 +1,6 @@
 package com.cg.siptracker.utility;
 
-import com.cg.siptracker.dto.SipSummaryDto;
+import com.cg.siptracker.dto.SipResponseDTO;
 import com.opencsv.CSVWriter;
 import org.springframework.stereotype.Component;
 
@@ -12,12 +12,12 @@ import java.util.List;
 @Component
 public class CsvReportGenerator {
 
-    public ByteArrayInputStream generate(List<SipSummaryDto> summaryList) {
+    public ByteArrayInputStream generate(List<SipResponseDTO> summaryList) {
         ByteArrayOutputStream out = new ByteArrayOutputStream();
         try (CSVWriter writer = new CSVWriter(new OutputStreamWriter(out))) {
             writer.writeNext(new String[]{"Fund Name", "Invested", "Current Value", "XIRR (%)", "CAGR (%)"});
 
-            for (SipSummaryDto dto : summaryList) {
+            for (SipResponseDTO dto : summaryList) {
                 writer.writeNext(new String[]{
                         dto.getFundName(),
                         String.valueOf(dto.getInvestedAmount()),
