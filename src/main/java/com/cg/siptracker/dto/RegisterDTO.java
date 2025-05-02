@@ -29,4 +29,8 @@ public class RegisterDTO {
             message = "Password must have at least 6 characters, 1 uppercase letter, and 1 digit"
     )
     private String password;
+
+    public RegisterDTO(String email) {
+        this.email = email;
+    }
 }
