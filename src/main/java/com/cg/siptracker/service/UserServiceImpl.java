@@ -56,7 +56,7 @@ public ResponseDTO registerUser(RegisterDTO registerDTO) {
     userRepository.save(user);
     log.info("User saved successfully with email: {}", user.getEmail());
 
-    emailService.sendEmail(user.getEmail(), "Registered in Employee Payroll App", "Thank You! You are successfully registered in Employee Payroll App!");
+    emailService.sendEmail(user.getEmail(), "Registered in SIP Tracker", "Thank You! You are successfully registered in SIP Tracker!");
     LoginRegisterResponseDTO registerResponse = new LoginRegisterResponseDTO(user.getFullName(), user.getEmail());
     log.info("Registration successful for user: {}", registerResponse.getEmail());
     return new ResponseDTO("User Registered Successfully", registerResponse);
@@ -80,7 +80,7 @@ public ResponseDTO registerUser(RegisterDTO registerDTO) {
         String token = jwtUtility.generateToken(user.getEmail());
         log.debug("JWT token generated for user: {}", user.getEmail());
 
-        emailService.sendEmail(user.getEmail(), "Login Successful", "Hi " + user.getFullName() + ",\n\n" + "You have successfully logged in to Employee Payroll App. \n\n" + "Your JWT Token is:\n\n" + token + "\n\n");
+        emailService.sendEmail(user.getEmail(), "Login Successful", "Hi " + user.getFullName() + ",\n\n" + "You have successfully logged in to SIP Tracker. \n\n" + "Your JWT Token is:\n\n" + token + "\n\n");
         log.info("Login successful and token saved for user: {}", user.getEmail());
 
         LoginRegisterResponseDTO loginResponse = new LoginRegisterResponseDTO(user.getFullName(), user.getEmail(), token);
