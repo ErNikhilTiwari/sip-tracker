@@ -20,10 +20,10 @@ public class CsvReportGenerator {
             for (SipResponseDTO dto : summaryList) {
                 writer.writeNext(new String[]{
                         dto.getFundName(),
-                        String.valueOf(dto.getInvestedAmount()),
-                        String.valueOf(dto.getCurrentValue()),
-                        String.format("%.2f", dto.getXirr()),
-                        String.format("%.2f", dto.getCagr())
+//                        String.valueOf(dto.getInvestedAmount()),
+//                        String.valueOf(dto.getCurrentValue()),
+//                        String.format("%.2f", dto.getXirr()),
+//                        String.format("%.2f", dto.getCagr())
                 });
             }
         } catch (Exception e) {

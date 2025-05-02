@@ -5,10 +5,10 @@ import com.fasterxml.jackson.annotation.JsonFormat;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.PastOrPresent;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-
 import java.time.LocalDate;
 
 @Data
@@ -25,6 +25,7 @@ public class SipDTO {
 
     @NotNull(message = "Start date is required")
     @JsonFormat(pattern = "yyyy-MM-dd")
+    @PastOrPresent(message = "Start date cannot be in the future")
     private LocalDate startDate;
 
     private Frequency frequency;

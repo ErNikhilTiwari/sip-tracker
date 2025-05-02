@@ -12,6 +12,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Slf4j
@@ -110,8 +111,22 @@ public class SIPServiceImpl implements SIPService {
         log.info("Fetching all SIPs for user {}", email);
         User user = userRepository.findByEmail(email)
                 .orElseThrow(() -> new ResourceNotFoundException("User not found with email: " + email));
+
         List<SIP> sips = sipRepository.findByUser(user);
-        return new ResponseDTO("All SIPs for user", sips);
+
+        List<SipResponseDTO> responseList = new ArrayList<>();
+        for (SIP sip : sips) {
+            SipResponseDTO dto = new SipResponseDTO(
+                    sip.getId(),
+                    sip.getFundName(),
+                    sip.getAmount(),
+                    sip.getFrequency(),
+                    sip.getStartDate()
+            );
+            responseList.add(dto);
+        }
+
+        return new ResponseDTO("All SIPs for user", responseList);
     }
 
 }
