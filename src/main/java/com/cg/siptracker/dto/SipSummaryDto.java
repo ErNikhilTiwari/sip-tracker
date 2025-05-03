@@ -9,10 +9,6 @@ public class SipSummaryDto {
     private double xirr; // in percentage (e.g. 12.5 means 12.5%)
     private double cagr; // in percentage
 
-    public SipSummaryDto() {
-    }
-
-
     public SipSummaryDto(String fundName, double investedAmount, double currentValue, double xirr, double cagr) {
         this.fundName = fundName;
         this.investedAmount = investedAmount;

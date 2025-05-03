@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.RestController;
 import java.io.IOException;
 
 @RestController
-@RequestMapping("/api/report")
+@RequestMapping("/api")
 public class ReportController {
 
     @Autowired

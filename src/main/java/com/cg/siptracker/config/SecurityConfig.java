@@ -21,9 +21,6 @@ public class SecurityConfig {
     @Autowired
     JwtAuthenticationEntryPoint jwtAuthenticationEntryPoint;
 
-    @Autowired
-    UserDetailsService userDetailsService;
-
     @Bean
     public BCryptPasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
@@ -33,8 +30,8 @@ public class SecurityConfig {
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http.csrf(csrf -> csrf.disable())
                 .authorizeHttpRequests(auth -> auth
-                        // Public API
                         .requestMatchers("/auth/**").permitAll()
+//                        .requestMatchers("/api/summary").permitAll()
 
                         // Endpoints for User (user can access SIP, Analytics, Report, and get NAV)
                         .requestMatchers("/api/sips/**").hasRole("USER")

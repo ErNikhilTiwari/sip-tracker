@@ -8,9 +8,9 @@ import com.cg.siptracker.repository.UserRepository;
 import com.cg.siptracker.utility.JwtUtility;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
-import java.security.SecureRandom;
 
 import java.time.LocalDateTime;
 import java.util.HashMap;
@@ -79,9 +79,9 @@ public ResponseDTO registerUser(RegisterDTO registerDTO) {
             log.warn("Login failed: Incorrect password for email - {}", loginDTO.getEmail());
             throw new ResourceNotFoundException("Invalid Email or password");
         }
-
         String token = jwtUtility.generateToken(user.getEmail());
         log.debug("JWT token generated for user: {}", user.getEmail());
+
 
         emailService.sendEmail(user.getEmail(), "Login Successful", "Hi " + user.getFullName() + ",\n\n" + "You have successfully logged in to SIP Tracker. \n\n" + "Your JWT Token is:\n\n" + token + "\n\n");
         log.info("Login successful and token saved for user: {}", user.getEmail());
@@ -153,50 +153,18 @@ public ResponseDTO registerUser(RegisterDTO registerDTO) {
 
     // Admin
     @Override
-    public ResponseDTO getAllUsers(String token) {
-        log.info("Validating admin token for fetching all users...");
-        String email = jwtUtility.extractEmail(token);
-        User admin = userRepository.findByEmail(email)
-                .orElseThrow(() -> new ResourceNotFoundException("Admin user not found"));
+    public ResponseDTO getAllUsers() {
+        String email = SecurityContextHolder.getContext().getAuthentication().getName();
 
-        if (!admin.getRole().equals(Role.ADMIN)) {
-            log.warn("Unauthorized access by non-admin user: {}", email);
-            throw new ResourceNotFoundException("Access denied: Admins only");
-        }
+        User admin = userRepository.findByEmailAndRole(email, Role.ADMIN)
+                .orElseThrow(() -> new ResourceNotFoundException("Access denied: Admins only"));
 
-        List<User> users = userRepository.findAll();
+        List<User> users = userRepository.findByRole(Role.USER);
         List<LoginRegisterResponseDTO> userDTOs = users.stream()
                 .map(u -> new LoginRegisterResponseDTO(u.getFullName(), u.getEmail(), u.getRole()))
                 .toList();
 
         return new ResponseDTO("All users fetched successfully", userDTOs);
     }
-
-    @Override
-    public ResponseDTO getAllUsersWithSips(String token) {
-        log.info("Validating admin token for fetching all users with SIPs...");
-        String email = jwtUtility.extractEmail(token);
-        User admin = userRepository.findByEmail(email)
-                .orElseThrow(() -> new ResourceNotFoundException("Admin user not found"));
-
-        if(!admin.getRole().equals(Role.ADMIN)) {
-            log.warn("Unauthorized access by non-admin user: {}", email);
-            throw new ResourceNotFoundException("Access denied: Admins only");
-        }
-
-        List<User> users = userRepository.findAll();
-
-        List<Map<String, Object>> data = users.stream().map(user -> {
-            Map<String, Object> map = new HashMap<>();
-            map.put("fullName", user.getFullName());
-            map.put("email", user.getEmail());
-            map.put("role", user.getRole());
-            map.put("sips", user.getSips()); // assuming user.getSips() returns List<SIP>
-            return map;
-        }).toList();
-
-        return new ResponseDTO("All users with SIPs fetched successfully", data);
-    }
-
 
 }
