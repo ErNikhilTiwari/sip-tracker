@@ -4,8 +4,7 @@ import jakarta.persistence.*;
 import lombok.*;
 
 import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.List;
+
 @Entity
 @Table(name = "sips")
 @Getter
@@ -30,8 +29,8 @@ public class SIP {
     @JoinColumn(name = "user_id")
     private User user;
 
-    public SIP(Long id, String fundName, Frequency frequency, double amount, LocalDate startDate) {
-        this.id = id;
+    public SIP(Long sip_id, String fundName, Frequency frequency, double amount, LocalDate startDate) {
+        this.sip_id = sip_id;
         this.fundName = fundName;
         this.frequency = frequency;
         this.amount = amount;

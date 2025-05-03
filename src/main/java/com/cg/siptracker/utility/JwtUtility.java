@@ -2,6 +2,7 @@ package com.cg.siptracker.utility;
 import com.cg.siptracker.model.User;
 import com.cg.siptracker.repository.UserRepository;
 import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.JwtException;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.security.Keys;
@@ -17,9 +18,6 @@ public class JwtUtility {
     @Autowired
     private UserRepository userRepository;
 
-//    private static final String SECRET_KEY = "divyansh7599abcd6769xyz1234567890987654321";
-//    private static final SecretKey key = Keys.secretKeyFor(SignatureAlgorithm.HS256);
-
     private static final String SECRET_KEY = "divyansh7599abcd6769xyz1234567890987654321";
     private static final SecretKey key = Keys.hmacShaKeyFor(SECRET_KEY.getBytes());
 
@@ -28,7 +26,7 @@ public class JwtUtility {
         return Jwts.builder()
                 .setSubject(email)
                 .setIssuedAt(new Date())
-                .setExpiration(new Date(System.currentTimeMillis() + 9*60*1000))
+                .setExpiration(new Date(System.currentTimeMillis() + 20*60*1000))
 //                .signWith(Keys.hmacShaKeyFor(SECRET_KEY.getBytes(StandardCharsets.UTF_8)), SignatureAlgorithm.HS256)
                 .signWith(key, SignatureAlgorithm.HS256)
                 .compact();
@@ -68,4 +66,17 @@ public class JwtUtility {
 
         return (email.equals(userEmail) && !valid && isTokenPresent);
     }
+
+    public boolean validateToken(String token) {
+        try {
+            Jwts.parserBuilder()
+                    .setSigningKey(key) // Use your actual secret key
+                    .build()
+                    .parseClaimsJws(token);
+            return true;
+        } catch (JwtException | IllegalArgumentException e) {
+            return false;
+        }
+    }
+
 }

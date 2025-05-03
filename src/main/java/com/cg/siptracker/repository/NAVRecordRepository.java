@@ -20,9 +20,5 @@ public interface NAVRecordRepository extends JpaRepository<NAVRecord, Long> {
 
     List<NAVRecord> findByFundNameOrderByDateAsc(String fundname);
 
-//    @Query("SELECT n FROM NAVRecord n WHERE n.fundName = :fundName ORDER BY n.date DESC")
-//    Optional<NAVRecord> findLatestByFundName(String fundName);
-
-
 }
 

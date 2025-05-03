@@ -5,7 +5,6 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
 import lombok.*;
 
-import jakarta.validation.constraints.*;
 
 @Data
 @NoArgsConstructor

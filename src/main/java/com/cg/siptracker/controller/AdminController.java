@@ -2,7 +2,6 @@ package com.cg.siptracker.controller;
 
 import com.cg.siptracker.dto.ResponseDTO;
 import com.cg.siptracker.service.UserService;
-import com.cg.siptracker.utility.JwtUtility;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -17,9 +16,6 @@ public class AdminController {
 
     @Autowired
     private UserService userService;
-
-    @Autowired
-    private JwtUtility jwtUtility;
 
     // Get all users
     @GetMapping("/users")

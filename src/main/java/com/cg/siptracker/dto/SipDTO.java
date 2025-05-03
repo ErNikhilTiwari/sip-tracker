@@ -25,6 +25,7 @@ public class SipDTO {
 //    @FutureOrPresent(message = "Start date must be today or in the future")
     private LocalDate startDate;
 
+    @NotNull(message = "Frequency is mandatory")
     private Frequency frequency;
 
 }

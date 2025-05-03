@@ -17,7 +17,7 @@ public class NAVRecord {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    private Long nav_id;
 
     private String fundName;
 

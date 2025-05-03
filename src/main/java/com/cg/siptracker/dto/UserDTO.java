@@ -21,5 +21,6 @@ public class UserDTO {
     @Pattern(regexp = "^(?=.*[A-Z])(?=.*\\d)[A-Za-z\\d@$!%*?&]{6,}$", message = "New Password must have at least 6 characters, 1 uppercase letter and 1 digit")
     private String password;
 
+    @NotNull(message = "Role is mandatory")
     private Role role;
 }

@@ -39,7 +39,7 @@ public class SIPServiceImpl implements SIPService {
         SIP saved = sipRepository.save(sip);
 
         Map<String, Object> response = new HashMap<>();
-        response.put("id", saved.getId());
+        response.put("sip_unique_id", saved.getSip_id());
         response.put("fundName", saved.getFundName());
         response.put("frequency", saved.getFrequency());
         response.put("amount", saved.getAmount());
@@ -66,7 +66,7 @@ public class SIPServiceImpl implements SIPService {
         SIP updated = sipRepository.save(sip);
 
         Map<String, Object> response = new HashMap<>();
-        response.put("id", updated.getId());
+        response.put("sip_unique_id", updated.getSip_id());
         response.put("fundName", updated.getFundName());
         response.put("frequency", updated.getFrequency());
         response.put("amount", updated.getAmount());
@@ -100,7 +100,7 @@ public class SIPServiceImpl implements SIPService {
         }
 
         Map<String, Object> response = new HashMap<>();
-        response.put("id", sip.getId());
+        response.put("sip_unique_id", sip.getSip_id());
         response.put("fundName", sip.getFundName());
         response.put("frequency", sip.getFrequency());
         response.put("amount", sip.getAmount());
@@ -120,7 +120,7 @@ public class SIPServiceImpl implements SIPService {
 
         for (SIP sip : sips) {
             Map<String, Object> map = new HashMap<>();
-            map.put("id", sip.getId());
+            map.put("sip_unique_id", sip.getSip_id());
             map.put("fundName", sip.getFundName());
             map.put("frequency", sip.getFrequency());
             map.put("amount", sip.getAmount());
