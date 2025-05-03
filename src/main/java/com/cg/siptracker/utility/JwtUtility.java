@@ -1,7 +1,5 @@
 package com.cg.siptracker.utility;
-
-//import com.cg.siptracker.model.User;
-
+import com.cg.siptracker.model.User;
 import com.cg.siptracker.repository.UserRepository;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
@@ -10,56 +8,64 @@ import io.jsonwebtoken.security.Keys;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import java.nio.charset.StandardCharsets;
+import javax.crypto.SecretKey;
 import java.util.Date;
 
 @Component
 public class JwtUtility {
 
     @Autowired
-    UserRepository userRepository;
+    private UserRepository userRepository;
 
-    private static final String SECRET_KEY = "ABCDEFGH12312345CHGIKYUTJYHDFJGYKYTFGYKKRJTGUYIUYRTYGITUYUIGYCTY@@";
+//    private static final String SECRET_KEY = "divyansh7599abcd6769xyz1234567890987654321";
+//    private static final SecretKey key = Keys.secretKeyFor(SignatureAlgorithm.HS256);
 
-    public String generateToken(String email) {
+    private static final String SECRET_KEY = "divyansh7599abcd6769xyz1234567890987654321";
+    private static final SecretKey key = Keys.hmacShaKeyFor(SECRET_KEY.getBytes());
+
+
+    public String generateToken(String email){
         return Jwts.builder()
                 .setSubject(email)
                 .setIssuedAt(new Date())
-                .setExpiration(new Date(System.currentTimeMillis() + 20*60*1000))
-                .signWith(Keys.hmacShaKeyFor(SECRET_KEY.getBytes(StandardCharsets.UTF_8)), SignatureAlgorithm.HS256)
+                .setExpiration(new Date(System.currentTimeMillis() + 9*60*1000))
+//                .signWith(Keys.hmacShaKeyFor(SECRET_KEY.getBytes(StandardCharsets.UTF_8)), SignatureAlgorithm.HS256)
+                .signWith(key, SignatureAlgorithm.HS256)
                 .compact();
-            }
+    }
 
     public String extractEmail(String token){
-        try {
+        try{
             System.out.println(token);
             Claims claims = Jwts.parserBuilder()
-                    .setSigningKey(Keys.hmacShaKeyFor(SECRET_KEY.getBytes(StandardCharsets.UTF_8)))
+//                    .setSigningKey(Keys.hmacShaKeyFor(SECRET_KEY.getBytes(StandardCharsets.UTF_8)))
+                    .setSigningKey(key)
                     .build()
                     .parseClaimsJws(token)
                     .getBody();
-            System.out.println("getting email => " + claims);
+            System.out.println("Getting email => " + claims);
             return claims.getSubject();
-        } catch (Exception e) {
-            //token expired
+        }catch(Exception e){
+            // Token expired
             return e.getMessage();
         }
     }
 
-    public boolean validateToken(String token,String userEmail){
-        final String email =extractEmail(token);
-//        boolean isTokenPresent =true;
-//        User user =userRepository.findByEmail(email).orElse(null);
-//        if(user != null && user.getToken()==null){
-//            isTokenPresent=false;
-//        }
+    public boolean validateToken(String token, String userEmail){
+        final String email = extractEmail(token);
+        boolean isTokenPresent = true;
+        User user = userRepository.findByEmail(email).orElse(null);
+        if(user != null && token == null){
+            isTokenPresent = false;
+        }
         final boolean valid = Jwts.parserBuilder()
-                .setSigningKey(SECRET_KEY.getBytes())
+                .setSigningKey(key)
                 .build()
                 .parseClaimsJws(token)
-                .getBody().getExpiration().before(new Date());
+                .getBody()
+                .getExpiration()
+                .before(new Date());
 
-        return (email.equals(userEmail) && !valid && email != null);
+        return (email.equals(userEmail) && !valid && isTokenPresent);
     }
-
 }

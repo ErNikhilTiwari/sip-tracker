@@ -7,6 +7,5 @@ public interface UserService {
     ResponseDTO forgotPassword(RegisterDTO request);
     ResponseDTO resetPassword(ResetPasswordDTO request);
     ResponseDTO changePassword(ChangePasswordDTO request, String token);
-    ResponseDTO getAllUsers(String token);
-    ResponseDTO getAllUsersWithSips(String token);
+    ResponseDTO getAllUsers();
 }
