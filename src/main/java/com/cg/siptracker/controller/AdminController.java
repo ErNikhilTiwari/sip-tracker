@@ -18,7 +18,7 @@ public class AdminController {
     @Autowired
     private UserService userService;
 
-    // 1. Get all users
+    // Get all users
     @GetMapping("/users")
     public ResponseEntity<ResponseDTO> getAllUsers(@RequestHeader("Authorization") String token) {
         log.info("Admin fetching all users...");
@@ -26,7 +26,7 @@ public class AdminController {
         return ResponseEntity.ok(responseDTO);
     }
 
-    // 2. Get all users with their SIPs
+    // Get all users with their SIPs
     @GetMapping("/users/sips")
     public ResponseEntity<ResponseDTO> getAllUsersWithSips(@RequestHeader("Authorization") String token) {
         log.info("Admin fetching all users with their SIPs...");

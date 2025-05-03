@@ -2,6 +2,7 @@ package com.cg.siptracker.service;
 
 import com.cg.siptracker.dto.*;
 import com.cg.siptracker.exception.ResourceNotFoundException;
+import com.cg.siptracker.model.Role;
 import com.cg.siptracker.model.User;
 import com.cg.siptracker.repository.UserRepository;
 import com.cg.siptracker.utility.JwtUtility;
@@ -52,15 +53,16 @@ public ResponseDTO registerUser(RegisterDTO registerDTO) {
     User user = new User();
     user.setFullName(registerDTO.getFullName());
     user.setEmail(registerDTO.getEmail());
+    user.setRole(registerDTO.getRole());
     user.setPassword(encodedPassword);
 
     userRepository.save(user);
-    log.info("User saved successfully with email: {}", user.getEmail());
+    log.info("Registered successfully with email: {}", user.getEmail());
 
     emailService.sendEmail(user.getEmail(), "Registered in SIP Tracker", "Thank You! You are successfully registered in SIP Tracker!");
-    LoginRegisterResponseDTO registerResponse = new LoginRegisterResponseDTO(user.getFullName(), user.getEmail());
-    log.info("Registration successful for user: {}", registerResponse.getEmail());
-    return new ResponseDTO("User Registered Successfully", registerResponse);
+    LoginRegisterResponseDTO registerResponse = new LoginRegisterResponseDTO(user.getFullName(), user.getEmail(), user.getRole());
+    log.info("Registration successful: {}", registerResponse.getEmail());
+    return new ResponseDTO("Registered Successfully", registerResponse);
 }
 
     @Override
@@ -157,7 +159,7 @@ public ResponseDTO registerUser(RegisterDTO registerDTO) {
         User admin = userRepository.findByEmail(email)
                 .orElseThrow(() -> new ResourceNotFoundException("Admin user not found"));
 
-        if (!admin.getRole().equals("ADMIN")) {
+        if (!admin.getRole().equals(Role.ADMIN)) {
             log.warn("Unauthorized access by non-admin user: {}", email);
             throw new ResourceNotFoundException("Access denied: Admins only");
         }
@@ -177,7 +179,7 @@ public ResponseDTO registerUser(RegisterDTO registerDTO) {
         User admin = userRepository.findByEmail(email)
                 .orElseThrow(() -> new ResourceNotFoundException("Admin user not found"));
 
-        if(!admin.getRole().equals("ADMIN")) {
+        if(!admin.getRole().equals(Role.ADMIN)) {
             log.warn("Unauthorized access by non-admin user: {}", email);
             throw new ResourceNotFoundException("Access denied: Admins only");
         }

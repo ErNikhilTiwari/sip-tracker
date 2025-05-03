@@ -18,8 +18,9 @@ public class LoginRegisterResponseDTO {
         this.token = token;
     }
 
-    public LoginRegisterResponseDTO(String fullName, String email) {
+    public LoginRegisterResponseDTO(String fullName, String email, Role role) {
         this.fullName = fullName;
         this.email = email;
+        this.role = role;
     }
 }

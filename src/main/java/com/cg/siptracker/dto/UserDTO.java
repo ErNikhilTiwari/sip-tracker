@@ -1,4 +1,5 @@
 package com.cg.siptracker.dto;
+import com.cg.siptracker.model.Role;
 import jakarta.validation.constraints.*;
 import lombok.*;
 
@@ -20,5 +21,5 @@ public class UserDTO {
     @Pattern(regexp = "^(?=.*[A-Z])(?=.*\\d)[A-Za-z\\d@$!%*?&]{6,}$", message = "New Password must have at least 6 characters, 1 uppercase letter and 1 digit")
     private String password;
 
-    private String role;
+    private Role role;
 }

@@ -23,6 +23,7 @@ public class SecurityConfig {
 
     @Autowired
     UserDetailsService userDetailsService;
+
     @Bean
     public BCryptPasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
@@ -32,16 +33,31 @@ public class SecurityConfig {
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http.csrf(csrf -> csrf.disable())
                 .authorizeHttpRequests(auth -> auth
+                        // Public API
                         .requestMatchers("/auth/**").permitAll()
-                        .requestMatchers("/api/admin/**").hasRole("ADMIN")
+
+                        // Endpoints for User (user can access SIP, Analytics, Report, and get NAV)
                         .requestMatchers("/api/sips/**").hasRole("USER")
+                        .requestMatchers("/api/analytics/**").hasRole("USER")
+                        .requestMatchers("/api/report/**").hasRole("USER")
+                        .requestMatchers("/api/nav/get/**").hasAnyRole("USER", "ADMIN")
+
+                        // Admin Endpoints (admin only can access admin and fetch NAV)
+                        .requestMatchers("/api/admin/**").hasRole("ADMIN")
+                        .requestMatchers("/api/nav/fetch/**").hasRole("ADMIN")
+
+                        // Endpoint that both user and admin can access
+                        .requestMatchers("/api/nav/get/**").hasAnyRole("USER", "ADMIN")
+
+                        // Any other request should be authenticated
                         .anyRequest().authenticated()
                 )
                 .exceptionHandling(ex -> ex.authenticationEntryPoint(jwtAuthenticationEntryPoint))
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS));
 
+        // Add the JWT filter before the UsernamePasswordAuthenticationFilter
         http.addFilterBefore(jwtRequestFilter, UsernamePasswordAuthenticationFilter.class);
 
         return http.build();
-        }
+    }
 }

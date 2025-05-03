@@ -26,7 +26,6 @@ public class SIP {
 
     private LocalDate startDate;
 
-
     @ManyToOne
     @JoinColumn(name = "user_id")
     private User user;
