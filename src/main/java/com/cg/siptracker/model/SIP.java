@@ -15,7 +15,7 @@ public class SIP {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    private Long sip_id;
 
     private String fundName;
 

@@ -79,9 +79,9 @@ public ResponseDTO registerUser(RegisterDTO registerDTO) {
             log.warn("Login failed: Incorrect password for email - {}", loginDTO.getEmail());
             throw new ResourceNotFoundException("Invalid Email or password");
         }
-
         String token = jwtUtility.generateToken(user.getEmail());
         log.debug("JWT token generated for user: {}", user.getEmail());
+
 
         emailService.sendEmail(user.getEmail(), "Login Successful", "Hi " + user.getFullName() + ",\n\n" + "You have successfully logged in to SIP Tracker. \n\n" + "Your JWT Token is:\n\n" + token + "\n\n");
         log.info("Login successful and token saved for user: {}", user.getEmail());
