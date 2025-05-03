@@ -44,7 +44,7 @@ public class NAVServiceImpl implements INAVService {
                 }
                 LocalDate date = LocalDate.parse(parts[5], formatter);
 
-                if (!navRecordRepository.existsByFundNameAndDate(fundName, date)) {
+                if (!navRecordRepository.existsByFundNameAndDate(fundName, date)) { //checks both date and name
                     NAVRecord record = new NAVRecord();
                     record.setFundName(fundName);
                     record.setNavValue(nav);
@@ -56,7 +56,7 @@ public class NAVServiceImpl implements INAVService {
                 }
             }
         }
-
+        System.out.println(count);
         return new ResponseDTO("Fetched and stored NAVs", count);
     }
 

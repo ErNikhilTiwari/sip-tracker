@@ -26,7 +26,7 @@ public class AnalyticsService {
         double amountPerInstallment = sip.getAmount();
 //        double latestNav = sip.getLatestNav();
 
-        double latestNav = navRecordRepository.findLatestByFundName(sip.getFundName())
+        double latestNav = navRecordRepository.findTopByFundNameOrderByDateDesc(sip.getFundName())
                 .map(NAVRecord::getNavValue)
                 .orElseThrow(() -> new RuntimeException("No NAV found for " + sip.getFundName()));
 
