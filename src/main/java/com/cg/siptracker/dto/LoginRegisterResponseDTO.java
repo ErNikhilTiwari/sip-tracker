@@ -1,5 +1,6 @@
 package com.cg.siptracker.dto;
 
+import com.cg.siptracker.model.Role;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.Data;
 
@@ -9,6 +10,7 @@ public class LoginRegisterResponseDTO {
     private String fullName;
     private String email;
     private String token;
+    private Role role;
 
     public LoginRegisterResponseDTO(String fullName, String email, String token) {
         this.fullName = fullName;
