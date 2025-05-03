@@ -1,18 +1,15 @@
 package com.cg.siptracker.model;
 
-import com.cg.siptracker.dto.UserDTO;
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
+import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
+import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.List;
 
 @Data
@@ -28,14 +25,16 @@ public class User implements UserDetails {
     private String email;
     private String password;
     private String fullName;
-    //    private String token;
-    private String resetOTP;
 
+    @Enumerated(EnumType.STRING)
+    private Role role;
 
+    @OneToMany(mappedBy = "user")
+    private List<SIP> sips = new ArrayList<>();
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        return Collections.emptyList(); // No roles for now
+        return List.of(new SimpleGrantedAuthority("ROLE_" + this.role.name()));
     }
 
     @Override
@@ -47,4 +46,5 @@ public class User implements UserDetails {
     public String getPassword(){
         return password;
     }
+
 }

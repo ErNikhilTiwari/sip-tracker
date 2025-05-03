@@ -13,6 +13,7 @@ import java.security.SecureRandom;
 
 import java.time.LocalDateTime;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 @Slf4j
@@ -147,5 +148,53 @@ public ResponseDTO registerUser(RegisterDTO registerDTO) {
         log.info("Password changed successfully for email: {}", user.getEmail());
         return new ResponseDTO("Password changed successfully", data);
     }
+
+    // Admin
+    @Override
+    public ResponseDTO getAllUsers(String token) {
+        log.info("Validating admin token for fetching all users...");
+        String email = jwtUtility.extractEmail(token);
+        User admin = userRepository.findByEmail(email)
+                .orElseThrow(() -> new ResourceNotFoundException("Admin user not found"));
+
+        if (!admin.getRole().equals("ADMIN")) {
+            log.warn("Unauthorized access by non-admin user: {}", email);
+            throw new ResourceNotFoundException("Access denied: Admins only");
+        }
+
+        List<User> users = userRepository.findAll();
+        List<LoginRegisterResponseDTO> userDTOs = users.stream()
+                .map(u -> new LoginRegisterResponseDTO(u.getFullName(), u.getEmail(), u.getRole()))
+                .toList();
+
+        return new ResponseDTO("All users fetched successfully", userDTOs);
+    }
+
+    @Override
+    public ResponseDTO getAllUsersWithSips(String token) {
+        log.info("Validating admin token for fetching all users with SIPs...");
+        String email = jwtUtility.extractEmail(token);
+        User admin = userRepository.findByEmail(email)
+                .orElseThrow(() -> new ResourceNotFoundException("Admin user not found"));
+
+        if(!admin.getRole().equals("ADMIN")) {
+            log.warn("Unauthorized access by non-admin user: {}", email);
+            throw new ResourceNotFoundException("Access denied: Admins only");
+        }
+
+        List<User> users = userRepository.findAll();
+
+        List<Map<String, Object>> data = users.stream().map(user -> {
+            Map<String, Object> map = new HashMap<>();
+            map.put("fullName", user.getFullName());
+            map.put("email", user.getEmail());
+            map.put("role", user.getRole());
+            map.put("sips", user.getSips()); // assuming user.getSips() returns List<SIP>
+            return map;
+        }).toList();
+
+        return new ResponseDTO("All users with SIPs fetched successfully", data);
+    }
+
 
 }

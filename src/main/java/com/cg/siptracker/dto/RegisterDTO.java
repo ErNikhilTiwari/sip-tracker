@@ -1,5 +1,6 @@
 package com.cg.siptracker.dto;
 
+import com.cg.siptracker.model.Role;
 import lombok.*;
 import jakarta.validation.constraints.*;
 
@@ -27,6 +28,8 @@ public class RegisterDTO {
             message = "Password must have at least 6 characters, 1 uppercase letter, and 1 digit"
     )
     private String password;
+
+    private Role role;
 
     public RegisterDTO(String email) {
         this.email = email;
