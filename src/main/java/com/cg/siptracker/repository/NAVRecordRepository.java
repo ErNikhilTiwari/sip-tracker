@@ -19,6 +19,8 @@ public interface NAVRecordRepository extends JpaRepository<NAVRecord, Long> {
     Optional<NAVRecord> findTopByFundNameOrderByDateDesc(String fundName);
 
     List<NAVRecord> findByFundNameOrderByDateAsc(String fundname);
+    List<NAVRecord> findTop2ByFundNameOrderByDateDesc(String fundName);
+
 
 }
 

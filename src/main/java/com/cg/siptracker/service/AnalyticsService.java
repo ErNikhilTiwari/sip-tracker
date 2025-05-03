@@ -12,6 +12,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
+import java.util.List;
+import java.util.Optional;
 import java.util.TreeMap;
 
 @Service
@@ -19,6 +21,9 @@ public class AnalyticsService {
 
     @Autowired
     private NAVRecordRepository navRecordRepository;
+
+    @Autowired
+    EmailService emailService;
 
     public SipSummaryDto analyzeSIP(SIP sip) {
         LocalDate today = LocalDate.now();
@@ -92,9 +97,63 @@ public class AnalyticsService {
             return 0;
         }
     }
+
+    private double calculateTotalUnits(SIP sip) {
+        LocalDate date = sip.getStartDate();
+        LocalDate today = LocalDate.now();
+        double totalUnits = 0;
+
+        while (!date.isAfter(today)) {
+            Optional<NAVRecord> navOpt = navRecordRepository.findByFundNameAndDate(sip.getFundName(), date);
+            if (navOpt.isPresent()) {
+                double nav = navOpt.get().getNavValue();
+                totalUnits += sip.getAmount() / nav;
+            }
+            date = incrementDate(date, sip.getFrequency());
+        }
+        return totalUnits;
+    }
+    public void checkAndSendDropAlert(SIP sip, String userEmail) {
+        List<NAVRecord> navs = navRecordRepository.findTop2ByFundNameOrderByDateDesc(sip.getFundName());
+
+        if (navs.size() < 2) return; // need 2 dates to compare
+
+        NAVRecord latest = navs.get(0);
+        NAVRecord previous = navs.get(1);
+
+        double dropPercentage = ((previous.getNavValue() - latest.getNavValue()) / previous.getNavValue()) * 100;
+
+        if (dropPercentage >= 0.001) {
+            double units = calculateTotalUnits(sip); // based on historical navs
+            double currentValue = units * latest.getNavValue();
+            double previousValue = units * previous.getNavValue();
+            double loss = previousValue - currentValue;
+
+            String subject = "⚠️ SIP Alert: NAV Dropped >10% for " + sip.getFundName();
+            String body = String.format("""
+                Alert! The NAV for your fund '%s' dropped by %.2f%%.
+
+                Previous NAV (on %s): %.4f
+                Latest NAV (on %s): %.4f
+
+                Estimated Loss on Your Holdings: ₹%.2f
+
+                Keep monitoring your investments.
+                """,
+                    sip.getFundName(),
+                    dropPercentage,
+                    previous.getDate(),
+                    previous.getNavValue(),
+                    latest.getDate(),
+                    latest.getNavValue(),
+                    loss
+            );
+
+            emailService.sendEmail(userEmail, subject, body);
+        }
+    }
+
 }
-
-
 
 
 
