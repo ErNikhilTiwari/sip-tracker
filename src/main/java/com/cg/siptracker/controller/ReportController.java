@@ -1,10 +1,12 @@
 package com.cg.siptracker.controller;
 
 import com.cg.siptracker.service.ReportService;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.*;
-
 import jakarta.servlet.http.HttpServletResponse;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+
 import java.io.IOException;
 
 @RestController
@@ -22,3 +24,4 @@ public class ReportController {
         reportService.generateCsvReport(response.getWriter());
     }
 }
+

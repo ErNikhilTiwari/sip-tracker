@@ -26,6 +26,7 @@ public class SIP {
 
     private LocalDate startDate;
 
+
     @ManyToOne
     @JoinColumn(name = "user_id")
     private User user;
@@ -37,6 +38,7 @@ public class SIP {
         this.amount = amount;
         this.startDate = startDate;
     }
+
 
 
 }
