@@ -22,7 +22,7 @@ public class SipDTO {
 
     @NotNull(message = "Start date is required")
     @JsonFormat(pattern = "yyyy-MM-dd")
-    @FutureOrPresent(message = "Start date must be today or in the future")
+//    @FutureOrPresent(message = "Start date must be today or in the future")
     private LocalDate startDate;
 
     private Frequency frequency;
