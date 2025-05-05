@@ -27,4 +27,10 @@ public class NAVRecord {
 
     private LocalDateTime timestampFetched;
 
+
+    NAVRecord(String fundName, Double navValue, LocalDate date) {
+    this.fundName =fundName;
+    this.navValue = navValue;
+    this.date=date;
+    }
 }

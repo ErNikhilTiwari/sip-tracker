@@ -24,7 +24,7 @@ public class NavFetchScheduler {
     private SIPRepository sipRepository;
 
 
-    @Scheduled(cron = "0 52 15 * * *") // Runs every day at 9:30 AM
+    @Scheduled(cron = "0 20 10 * * *") // Runs every day at 9:30 AM
     public void scheduleNAVFetch() {
         try {
             ResponseDTO response = navService.fetchAndStoreNAVs();

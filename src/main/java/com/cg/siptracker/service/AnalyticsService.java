@@ -116,6 +116,7 @@ public class AnalyticsService {
     public void checkAndSendDropAlert(SIP sip, String userEmail) {
         List<NAVRecord> navs = navRecordRepository.findTop2ByFundNameOrderByDateDesc(sip.getFundName());
 
+
         if (navs.size() < 2) return; // need 2 dates to compare
 
         NAVRecord latest = navs.get(0);
@@ -123,7 +124,7 @@ public class AnalyticsService {
 
         double dropPercentage = ((previous.getNavValue() - latest.getNavValue()) / previous.getNavValue()) * 100;
 
-        if (dropPercentage >= 0.001) {
+        if (dropPercentage >= 10.0) {
             double units = calculateTotalUnits(sip); // based on historical navs
             double currentValue = units * latest.getNavValue();
             double previousValue = units * previous.getNavValue();
