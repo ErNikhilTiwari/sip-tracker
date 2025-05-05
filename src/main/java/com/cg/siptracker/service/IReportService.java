@@ -1,5 +1,5 @@
 package com.cg.siptracker.service;
 
 public interface IReportService {
-    byte[] generateCsvReport();
+    byte[] generateCsvReport(String email);
 }

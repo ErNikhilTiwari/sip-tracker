@@ -10,4 +10,7 @@ import java.util.List;
 @Repository
 public interface SIPRepository extends JpaRepository<SIP,Long> {
     List<SIP> findByUser(User user);
+
+    List<SIP> findByUserEmail(String email);
+
 }

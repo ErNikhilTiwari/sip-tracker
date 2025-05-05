@@ -23,7 +23,7 @@ public class ReportServiceImpl implements IReportService {
 
 
     @Override
-    public byte[] generateCsvReport() {
+    public byte[] generateCsvReport(String email) {
 
         ByteArrayOutputStream out = new ByteArrayOutputStream();
         PrintWriter writer = new PrintWriter(new OutputStreamWriter(out, StandardCharsets.UTF_8));

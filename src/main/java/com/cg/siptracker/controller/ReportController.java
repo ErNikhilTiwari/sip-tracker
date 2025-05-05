@@ -27,16 +27,16 @@ public class ReportController {
 
     @GetMapping("/summary")
     public void downloadAndEmailCsv(@RequestHeader("Authorization") String token, HttpServletResponse response) throws IOException {
-        byte[] csvBytes = IReportService.generateCsvReport();
+        String email = jwtUtil.extractEmail(token.substring(7));
+        byte[] csvBytes = IReportService.generateCsvReport(email);
 
-        // 1. Write CSV to HTTP response for download
+        // 1. Write CSV to HTTP response
         response.setContentType("text/csv");
         response.setHeader("Content-Disposition", "attachment; filename=sip-summary.csv");
         response.getOutputStream().write(csvBytes);
         response.getOutputStream().flush();
 
-        // 2. Send the same CSV as email attachment
-        String email = jwtUtil.extractEmail(token.substring(7));
+        // 2. Send email
         mailService.sendCsvWithAttachment(
                 email,
                 "SIP Summary Report",
@@ -47,4 +47,33 @@ public class ReportController {
         System.out.println("Email Sent");
     }
 
+
+
+//    @GetMapping("/summary")
+//    public void downloadAndEmailCsv(@RequestHeader("Authorization") String token, HttpServletResponse response) throws IOException {
+//        byte[] csvBytes = IReportService.generateCsvReport();
+//
+//        // 1. Write CSV to HTTP response for download
+//        response.setContentType("text/csv");
+//        response.setHeader("Content-Disposition", "attachment; filename=sip-summary.csv");
+//        response.getOutputStream().write(csvBytes);
+//        response.getOutputStream().flush();
+//
+//        // 2. Send the same CSV as email attachment
+//        String email = jwtUtil.extractEmail(token.substring(7));
+//        mailService.sendCsvWithAttachment(
+//                email,
+//                "SIP Summary Report",
+//                "Attached is your SIP summary in CSV format.",
+//                csvBytes,
+//                "sip-summary.csv"
+//        );
+//        System.out.println("Email Sent");
+//    }
+
+
+
 }
+
+
+
