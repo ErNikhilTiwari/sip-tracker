@@ -1,27 +1,50 @@
 package com.cg.siptracker.controller;
 
-import com.cg.siptracker.service.ReportService;
+
+import com.cg.siptracker.service.EmailService;
+import com.cg.siptracker.service.IReportService;
+import com.cg.siptracker.utility.JwtUtility;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.io.IOException;
+
 
 @RestController
 @RequestMapping("/api")
 public class ReportController {
 
+
     @Autowired
-    private ReportService reportService;
+    private IReportService IReportService;
+
+    @Autowired
+    private JwtUtility jwtUtil;
+
+    @Autowired
+    private EmailService mailService;
 
     @GetMapping("/summary")
-    public void downloadCsv(HttpServletResponse response) throws IOException {
+    public void downloadAndEmailCsv(@RequestHeader("Authorization") String token, HttpServletResponse response) throws IOException {
+        byte[] csvBytes = IReportService.generateCsvReport();
+
+        // 1. Write CSV to HTTP response for download
         response.setContentType("text/csv");
         response.setHeader("Content-Disposition", "attachment; filename=sip-summary.csv");
+        response.getOutputStream().write(csvBytes);
+        response.getOutputStream().flush();
 
-        reportService.generateCsvReport(response.getWriter());
+        // 2. Send the same CSV as email attachment
+        String email = jwtUtil.extractEmail(token.substring(7));
+        mailService.sendCsvWithAttachment(
+                email,
+                "SIP Summary Report",
+                "Attached is your SIP summary in CSV format.",
+                csvBytes,
+                "sip-summary.csv"
+        );
+        System.out.println("Email Sent");
     }
-}
 
+}

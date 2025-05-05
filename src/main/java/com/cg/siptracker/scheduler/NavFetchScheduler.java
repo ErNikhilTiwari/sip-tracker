@@ -3,7 +3,7 @@ package com.cg.siptracker.scheduler;
 import com.cg.siptracker.dto.ResponseDTO;
 import com.cg.siptracker.model.SIP;
 import com.cg.siptracker.repository.SIPRepository;
-import com.cg.siptracker.service.AnalyticsService;
+import com.cg.siptracker.service.IAnalyticsService;
 import com.cg.siptracker.service.INAVService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
@@ -18,7 +18,7 @@ public class NavFetchScheduler {
     private INAVService navService;
 
     @Autowired
-    private AnalyticsService analyticsService;
+    private IAnalyticsService IAnalyticsService;
 
     @Autowired
     private SIPRepository sipRepository;
@@ -34,7 +34,7 @@ public class NavFetchScheduler {
             List<SIP> sips = sipRepository.findAll();
             for (SIP sip : sips) {
                 String userEmail = sip.getUser().getEmail(); // Assumes SIP has User and User has Email
-                analyticsService.checkAndSendDropAlert(sip, userEmail);
+                IAnalyticsService.checkAndSendDropAlert(sip, userEmail);
             }
 
         } catch (Exception e) {

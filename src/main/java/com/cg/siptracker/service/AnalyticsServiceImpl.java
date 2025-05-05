@@ -17,7 +17,7 @@ import java.util.Optional;
 import java.util.TreeMap;
 
 @Service
-public class AnalyticsService {
+public class AnalyticsServiceImpl implements IAnalyticsService {
 
     @Autowired
     private NAVRecordRepository navRecordRepository;
@@ -25,6 +25,7 @@ public class AnalyticsService {
     @Autowired
     EmailService emailService;
 
+    @Override
     public SipSummaryDto analyzeSIP(SIP sip) {
         LocalDate today = LocalDate.now();
         LocalDate date = sip.getStartDate();
@@ -64,7 +65,8 @@ public class AnalyticsService {
         );
     }
 
-    private LocalDate incrementDate(LocalDate date, Frequency frequency) {
+    @Override
+    public LocalDate incrementDate(LocalDate date, Frequency frequency) {
         return switch (frequency) {
             case DAILY -> date.plusDays(1);
             case WEEKLY -> date.plusWeeks(1);
@@ -74,12 +76,14 @@ public class AnalyticsService {
         };
     }
 
-    private double calculateCAGR(double invested, double current, long years) {
+    @Override
+    public double calculateCAGR(double invested, double current, long years) {
         if (invested <= 0 || years <= 0) return 0;
         return Math.pow(current / invested, 1.0 / years) - 1;
     }
 
-    private double calculateXIRR(TreeMap<LocalDate, Double> cashFlows) {
+    @Override
+    public double calculateXIRR(TreeMap<LocalDate, Double> cashFlows) {
         UnivariateFunction irrFunction = rate -> {
             double result = 0.0;
             LocalDate start = cashFlows.firstKey();
@@ -98,7 +102,8 @@ public class AnalyticsService {
         }
     }
 
-    private double calculateTotalUnits(SIP sip) {
+    @Override
+    public double calculateTotalUnits(SIP sip) {
         LocalDate date = sip.getStartDate();
         LocalDate today = LocalDate.now();
         double totalUnits = 0;
@@ -113,6 +118,7 @@ public class AnalyticsService {
         }
         return totalUnits;
     }
+    @Override
     public void checkAndSendDropAlert(SIP sip, String userEmail) {
         List<NAVRecord> navs = navRecordRepository.findTop2ByFundNameOrderByDateDesc(sip.getFundName());
 

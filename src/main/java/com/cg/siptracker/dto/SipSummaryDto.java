@@ -63,8 +63,8 @@ public class SipSummaryDto {
                 "fundName='" + fundName + '\'' +
                 ", investedAmount=" + investedAmount +
                 ", currentValue=" + currentValue +
-                ", xirr=" + xirr +
-                ", cagr=" + cagr +
+                ", xirr (%)=" + xirr +
+                ", cagr (%)=" + cagr +
                 '}';
     }
 }

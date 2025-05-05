@@ -5,26 +5,34 @@ import com.cg.siptracker.model.SIP;
 import com.cg.siptracker.repository.SIPRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-
+import java.io.ByteArrayOutputStream;
+import java.io.OutputStreamWriter;
+import java.nio.charset.StandardCharsets;
 import java.io.PrintWriter;
 import java.util.List;
 
 @Service
-public class ReportService {
+public class ReportServiceImpl implements IReportService {
 
     @Autowired
-    private AnalyticsService analyticsService;
+    private IAnalyticsService IAnalyticsService;
 
     @Autowired
     private SIPRepository sipRepository;
 
-    public void generateCsvReport(PrintWriter writer) {
-        List<SIP> sips = sipRepository.findAll();
 
+
+    @Override
+    public byte[] generateCsvReport() {
+
+        ByteArrayOutputStream out = new ByteArrayOutputStream();
+        PrintWriter writer = new PrintWriter(new OutputStreamWriter(out, StandardCharsets.UTF_8));
+
+        List<SIP> sips = sipRepository.findAll();
         writer.println("Fund Name,Invested Amount,Current Value,XIRR (%),CAGR (%)");
 
         for (SIP sip : sips) {
-            SipSummaryDto summary = analyticsService.analyzeSIP(sip);
+            SipSummaryDto summary = IAnalyticsService.analyzeSIP(sip);
 
             writer.printf("%s,%.2f,%.2f,%.2f,%.2f%n",
                     summary.getFundName(),
@@ -33,5 +41,10 @@ public class ReportService {
                     summary.getXirr(),
                     summary.getCagr());
         }
+
+        writer.flush();
+        return out.toByteArray();
     }
+
+
 }

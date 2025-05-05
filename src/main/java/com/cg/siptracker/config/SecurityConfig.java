@@ -31,7 +31,6 @@ public class SecurityConfig {
         http.csrf(csrf -> csrf.disable())
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/auth/**").permitAll()
-//                        .requestMatchers("/api/summary").permitAll()
 
                         // Endpoints for User (user can access SIP, Analytics, Report, and get NAV)
                         .requestMatchers("/api/sips/**").hasRole("USER")
