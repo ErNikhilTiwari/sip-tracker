@@ -20,7 +20,7 @@ public class AdminController {
     // Get all users
     @GetMapping("/users")
     public ResponseEntity<ResponseDTO> getAllUsers() {
-        log.info("Admin fetching all users...");
+        log.info("Admin fetching all users....");
         ResponseDTO responseDTO = userService.getAllUsers();
         return ResponseEntity.ok(responseDTO);
     }
