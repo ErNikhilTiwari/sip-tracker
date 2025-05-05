@@ -157,7 +157,7 @@ public ResponseDTO registerUser(RegisterDTO registerDTO) {
         String email = SecurityContextHolder.getContext().getAuthentication().getName();
 
         User admin = userRepository.findByEmailAndRole(email, Role.ADMIN)
-                .orElseThrow(() -> new ResourceNotFoundException("Access denied: Admins only"));
+                .orElseThrow(() -> new ResourceNotFoundException("Access denied: Admin only"));
 
         List<User> users = userRepository.findByRole(Role.USER);
         List<LoginRegisterResponseDTO> userDTOs = users.stream()
